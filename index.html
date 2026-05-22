@@ -193,7 +193,7 @@
                 <div class="tab-pane fade show active" id="inventario" role="tabpanel">
                     <div class="header-premium d-flex justify-content-between align-items-center mb-3">
                         <span><i class="bi bi-box-seam me-2"></i> Registro de Inventarios Insumos</span>
-                        <button class="btn btn-sm btn-outline-light" onclick="limpiarStorage('insumos')">BORRAR VISTA</button>
+                       
                     </div>
                     
                     <div class="card p-3 mb-4 bg-light border border-light-subtle rounded-3">
@@ -246,7 +246,7 @@
                         <div class="table-wrapper table-responsive">
                             <table class="table table-hover table-striped mb-0 text-center align-middle">
                                 <thead><tr><th>Fecha</th><th>Descripción</th><th>Depto</th><th>Ubicación</th><th>Conteo</th><th>País</th></tr></thead>
-                                <tbody id="bodyGeneral"></tbody>
+                                <tbody id="bodyGeneral"><tr><td colspan="6" class="text-muted p-3">Cargando datos desde la nube de Google...</td></tr></tbody>
                             </table>
                         </div>
                     </div>
@@ -259,7 +259,7 @@
                 <div class="tab-pane fade" id="ciclicos" role="tabpanel">
                     <div class="header-premium d-flex justify-content-between align-items-center mb-3">
                         <span><i class="bi bi-arrow-repeat me-2"></i> Registro de Inventarios Cíclicos</span>
-                        <button class="btn btn-sm btn-outline-light" onclick="limpiarStorage('ciclicos')">BORRAR VISTA</button>
+                       
                     </div>
                     
                     <div class="card p-3 mb-4 bg-light border border-light-subtle rounded-3">
@@ -290,7 +290,7 @@
                         <div class="table-wrapper table-responsive">
                             <table class="table table-hover table-striped mb-0 text-center align-middle">
                                 <thead><tr><th>Ubicación</th><th>Silla/Monitor</th><th>Estado</th><th>Serial</th><th>CO-IT</th></tr></thead>
-                                <tbody id="bodyCiclico"></tbody>
+                                <tbody id="bodyCiclico"><tr><td colspan="5" class="text-muted p-3">Cargando datos desde la nube de Google...</td></tr></tbody>
                             </table>
                         </div>
                     </div>
@@ -334,7 +334,7 @@
                 <div class="tab-pane fade" id="stock_novedades" role="tabpanel">
                     <div class="header-premium d-flex justify-content-between align-items-center mb-3">
                         <span><i class="bi bi-clock-history me-2"></i> Entradas e Ingresos de Stock</span>
-                        <button class="btn btn-sm btn-outline-light" onclick="limpiarStorage('novedades')">BORRAR VISTA</button>
+                       
                     </div>
                     
                     <div class="card p-3 mb-4 bg-light border border-light-subtle rounded-3">
@@ -363,7 +363,7 @@
                                         <th>Cantidad</th>
                                     </tr>
                                 </thead>
-                                <tbody id="bodyNovActivos"></tbody>
+                                <tbody id="bodyNovActivos"><tr><td colspan="5" class="text-muted p-3">Cargando...</td></tr></tbody>
                             </table>
                         </div>
                     </div>
@@ -413,7 +413,7 @@
                                         <th>Cantidad Llegada</th>
                                     </tr>
                                 </thead>
-                                <tbody id="bodyNovInsumos"></tbody>
+                                <tbody id="bodyNovInsumos"><tr><td colspan="3" class="text-muted p-3">Cargando...</td></tr></tbody>
                             </table>
                         </div>
                     </div>
@@ -445,7 +445,7 @@
                 <div class="tab-pane fade" id="quejas_tab" role="tabpanel">
                     <div class="header-premium d-flex justify-content-between align-items-center mb-3">
                         <span><i class="bi bi-chat-left-dots-fill me-2"></i> Buzón de Sugerencias</span>
-                        <button class="btn btn-sm btn-outline-light" onclick="limpiarStorage('quejas')">BORRAR VISTA</button>
+                       
                     </div>
 
                     <div id="chatQuejas" class="mb-4 d-flex flex-column gap-2 p-3 bg-light border rounded-3 shadow-inner" style="max-height: 350px; overflow-y: auto;"></div>
@@ -489,55 +489,44 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxPTFlBNzeudoKuZLkD8tWEQrIHOHOa21hLn45221KjOgFqTm1vNg_1CgXMVEjv5vTQ/exec";
+    // URL DE TU APLICACIÓN WEB DE GOOGLE APPS SCRIPT CONFIGURADA
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx3niwSNFM9G83qxq_RkKOf2HCZDXXLLq544Sw1bAUQntF0eKEWPiiGteL2I3mSw8PkRA/exec";
+    
     const departamentos = ["LOG Connecta","LOG One Plaza","SD Torre CCI","SD Connecta","SD One Plaza"];
     
+    // Almacenamiento unificado sincronizado con Google
+    let NUBE_DATOS = {
+        INSUMO: [],
+        CICLICO: [],
+        NOVEDAD_ACTIVO: [],
+        NOVEDAD_INSUMO: [],
+        QUEJA: []
+    };
+
     const insumosConFotos = [
-        { nombre: "Mouse", emoji: "🖱️", url: "" },
-        { nombre: "Teclado", emoji: "⌨️", url: "" },
-        { nombre: "Caja pala Dell o Lenovo", emoji: "📦", url: "" },
-        { nombre: "Caja para mack", emoji: "📦", url: "" },
-        { nombre: "Caja para cargador ", emoji: "📦", url: "" },
-        { nombre: "Caja para maletas NH", emoji: "📦", url: "" },
-        { nombre: "Caja para sillas ", emoji: "📦", url: "" },
-        { nombre: "Caja monitor ", emoji: "📦", url: "" },
-        { nombre: "Cajas de kit ", emoji: "📦", url: "" },
-        { nombre: "Rollo de vinipel ", emoji: "🔄", url: "" },
-        { nombre: "Carton corrugado ", emoji: "📜", url: "" },
-        { nombre: "Rollo de plástico burbuja ", emoji: "🫧", url: "" },
-        { nombre: "Suncho plástico ", emoji: "🎗️", url: "" },
-        { nombre: "Grapa para suncho plástico ", emoji: "📎", url: "" },
-        { nombre: "Cinta trasparente ancha ", emoji: "📼", url: "" },
-        { nombre: "Cinta trasparente delgada", emoji: "📼", url: "" },
-        { nombre: "Cinta de enmascarar ancha ", emoji: "📼", url: "" },
-        { nombre: "Cinta de enmascarar delgada ", emoji: "📼", url: "" },
-        { nombre: "Sobre de Manila tamaño carta ", emoji: "✉️", url: "" },
-        { nombre: "Sobre de Manila oficio", emoji: "✉️", url: "" },
-        { nombre: "Sobre de Manila extra ", emoji: "✉️", url: "" },
-        { nombre: "Sobre para yubikey ", emoji: "🔑", url: "" },
-        { nombre: "Bolsa de valor carta ", emoji: "🛍️", url: "" },
-        { nombre: "Bolsas de valor oficio ", emoji: "🛍️", url: "" },
-        { nombre: "Bolsas servientrega ", emoji: "🚚", url: "" },
-        { nombre: "Llaves exagonas ", emoji: "🔧", url: "" },
-        { nombre: "Destornillador de pala", emoji: "🪛", url: "" },
-        { nombre: "Destornillador de estella ", emoji: "🪛", url: "" },
-        { nombre: "Destornillador de varias piezas ", emoji: "🪛", url: "" },
-        { nombre: "Martillo de goma ", emoji: "🔨", url: "" },
-        { nombre: "Encintador ", emoji: "🎀", url: "" },
-        { nombre: "Tijeras", emoji: "✂️", url: "" },
-        { nombre: "Bisturi ", emoji: "🔪", url: "" },
-        { nombre: "Post-it paquete ", emoji: "📝", url: "" },
-        { nombre: "Esfero ", emoji: "🖊️", url: "" },
-        { nombre: "Marcadores ", emoji: "🖍️", url: "" },
-        { nombre: "Guantes de nitrillo ", emoji: "🧤", url: "" },
-        { nombre: "Guantes desechables ", emoji: "🧤", url: "" },
-        { nombre: "Grapadora ", emoji: "🗜️", url: "" },
-        { nombre: "Abre huecos ", emoji: "🕳️", url: "" },
-        { nombre: "Quitaganchos ", emoji: "⛏️", url: "" },
-        { nombre: "Guillotina ", emoji: "📐", url: "" },
-        { nombre: "Punteras ", emoji: "👟", url: "" },
-        { nombre: "Escalera ", emoji: "🪜", url: "" },
-        { nombre: "Carritos", emoji: "🛒", url: "" }
+        { nombre: "Mouse", emoji: "🖱️" }, { nombre: "Teclado", emoji: "⌨️" },
+        { nombre: "Caja pala Dell o Lenovo", emoji: "📦" }, { nombre: "Caja para mack", emoji: "📦" },
+        { nombre: "Caja para cargador ", emoji: "📦" }, { nombre: "Caja para maletas NH", emoji: "📦" },
+        { nombre: "Caja para sillas ", emoji: "📦" }, { nombre: "Caja monitor ", emoji: "📦" },
+        { nombre: "Cajas de kit ", emoji: "📦" }, { nombre: "Rollo de vinipel ", emoji: "🔄" },
+        { nombre: "Carton corrugado ", emoji: "📜" }, { nombre: "Rollo de plástico burbuja ", emoji: "🫧" },
+        { nombre: "Suncho plástico ", emoji: "🎗️" }, { nombre: "Grapa para suncho plástico ", emoji: "📎" },
+        { nombre: "Cinta trasparente ancha ", emoji: "📼" }, { nombre: "Cinta trasparente delgada", emoji: "📼" },
+        { nombre: "Cinta de enmascarar ancha ", emoji: "📼" }, { nombre: "Cinta de enmascarar delgada ", emoji: "📼" },
+        { nombre: "Sobre de Manila tamaño carta ", emoji: "✉️" }, { nombre: "Sobre de Manila oficio", emoji: "✉️" },
+        { nombre: "Sobre de Manila extra ", emoji: "✉️" }, { nombre: "Sobre para yubikey ", emoji: "🔑" },
+        { nombre: "Bolsa de valor carta ", emoji: "🛍️" }, { nombre: "Bolsas de valor oficio ", emoji: "🛍️" },
+        { nombre: "Bolsas servientrega ", emoji: "🚚" }, { nombre: "Llaves exagonas ", emoji: "🔧" },
+        { nombre: "Destornillador de pala", emoji: "🪛" }, { nombre: "Destornillador de estella ", emoji: "🪛" },
+        { nombre: "Destornillador de varias piezas ", emoji: "🪛" }, { fontName: "Martillo de goma ", emoji: "🔨" },
+        { nombre: "Encintador ", emoji: "🎀" }, { nombre: "Tijeras", emoji: "✂️" },
+        { nombre: "Bisturi ", emoji: "🔪" }, { nombre: "Post-it paquete ", emoji: "📝" },
+        { nombre: "Esfero ", emoji: "🖊️" }, { nombre: "Marcadores ", emoji: "🖍️" },
+        { nombre: "Guantes de nitrillo ", emoji: "🧤" }, { nombre: "Guantes desechables ", emoji: "🧤" },
+        { nombre: "Grapadora ", emoji: "🗜️" }, { nombre: "Abre huecos ", emoji: "🕳️" },
+        { nombre: "Quitaganchos ", emoji: "⛏️" }, { nombre: "Guillotina ", emoji: "📐" },
+        { nombre: "Punteras ", emoji: "👟" }, { nombre: "Escalera ", emoji: "🪜" },
+        { nombre: "Carritos", emoji: "🛒" }
     ];
 
     function obtenerFechaEstandar() {
@@ -558,10 +547,7 @@
         
         const insumoSelect = document.getElementById("novInsumoDesc");
         if(insumoSelect) {
-            insumoSelect.innerHTML = insumosConFotos.map(i => {
-                const nombreItem = i.nombre || i.font_name;
-                return `<option value="${nombreItem}">${i.emoji} ${nombreItem}</option>`;
-            }).join('');
+            insumoSelect.innerHTML = insumosConFotos.map(i => `<option value="${i.nombre}">${i.emoji} ${i.nombre}</option>`).join('');
         }
 
         const ubicSimple = ["CD-A", "CD-C", "S1-A", "S1-C", "P4-A", "P4-C", "CD", "S1", "P4"];
@@ -574,15 +560,12 @@
 
     function renderPhotoGrid() {
         const grid = document.getElementById("photoGridInsumos");
-        grid.innerHTML = insumosConFotos.map(insumo => {
-            const nombreItem = insumo.nombre || insumo.font_name;
-            return `
-                <div class="insumo-card" onclick="selectInsumoCard(this, '${nombreItem}')">
-                    <div class="icon-fallback">${insumo.emoji}</div>
-                    <span>${nombreItem}</span>
-                </div>
-            `;
-        }).join('');
+        grid.innerHTML = insumosConFotos.map(insumo => `
+            <div class="insumo-card" onclick="selectInsumoCard(this, '${insumo.nombre}')">
+                <div class="icon-fallback">${insumo.emoji}</div>
+                <span>${insumo.nombre}</span>
+            </div>
+        `).join('');
     }
 
     function selectInsumoCard(element, nombreInsumo) {
@@ -593,30 +576,44 @@
         document.getElementById("genInCant").focus();
     }
 
-    window.onload = () => {
+    async function cargarDatosDesdeGoogle() {
+        try {
+            const respuesta = await fetch(SCRIPT_URL, {
+                method: "POST",
+                body: JSON.stringify({ action: "READ_ALL" })
+            });
+            const dataJson = await respuesta.json();
+            if(dataJson.status === "success") {
+                NUBE_DATOS.INSUMO = (dataJson.data.INSUMO || []).map(r => ({ f: r[0], p: r[1], d: r[2], desc: r[3], u: r[4], original: r[5], total: evalSafe(r[5]) }));
+                NUBE_DATOS.CICLICO = (dataJson.data.CICLICO || []).map(r => ({ f: r[0], d: r[1], u: r[2], sillaFull: r[3], e: r[4], serialVal: r[5], coitVal: r[6], t: r[7] }));
+                NUBE_DATOS.NOVEDAD_ACTIVO = (dataJson.data.NOVEDAD_ACTIVO || []).map(r => ({ fecha: r[0], desc: r[1], cant: parseInt(r[2])||0, resp: r[3], nota: r[4], categoria: "ACTIVO" }));
+                NUBE_DATOS.NOVEDAD_INSUMO = (dataJson.data.NOVEDAD_INSUMO || []).map(r => ({ fecha: r[0], desc: r[1], cant: parseInt(r[2])||0, resp: r[3], nota: r[4], categoria: "INSUMO" }));
+                NUBE_DATOS.QUEJA = (dataJson.data.QUEJA || []).map(r => ({ fecha: r[0], hora: r[1], nombre: r[2], dept: r[3], mensaje: r[4] }));
+                
+                renderizarTablasTodo();
+            }
+        } catch (e) {
+            console.error("No se pudo conectar para leer de Google Sheets:", e);
+        }
+    }
+
+    function evalSafe(mathStr) {
+        try { return mathStr.toString().split('+').reduce((acc, curr) => acc + (parseFloat(curr.trim()) || 0), 0); } catch(e) { return 0; }
+    }
+
+    function renderizarTablasTodo() {
+        renderGeneral();
+        renderCiclico();
+        renderNovedades();
+        renderQuejas();
+    }
+
+    window.onload = async () => {
         llenarListas();
         const t = obtenerFechaEstandar();
         document.querySelectorAll("input[type='date']").forEach(d => d.value = t);
-        renderGeneral(); renderCiclico(); renderNovedades(); renderQuejas();
+        await cargarDatosDesdeGoogle();
     };
-
-    function limpiarStorage(tipo) {
-        if(confirm("¿Seguro que quieres limpiar esta tabla vista? Esto NO borrará los datos del Excel central de Google.")){
-            if(tipo === 'insumos') {
-                localStorage.removeItem('db_Final_Insumos_V7');
-                renderGeneral();
-            } else if(tipo === 'ciclicos') {
-                localStorage.removeItem('db_Final_Ciclicos_V7');
-                renderCiclico();
-            } else if(tipo === 'novedades') {
-                localStorage.removeItem('db_Final_Novedades_V7');
-                renderNovedades();
-            } else if(tipo === 'quejas') {
-                localStorage.removeItem('db_Final_Quejas_V7');
-                renderQuejas();
-            }
-        }
-    }
 
     async function enviarAGoogle(datos) {
         try {
@@ -630,7 +627,6 @@
     }
 
     async function guardarGenDirecto() {
-        let data = JSON.parse(localStorage.getItem('db_Final_Insumos_V7')) || [];
         const f = document.getElementById('genFecha').value;
         const p = document.getElementById('genPais').value;
         const d = document.getElementById('genDept').value;
@@ -641,51 +637,40 @@
         if(!desc) return alert("Por favor, selecciona primero un insumo haciendo clic en su foto.");
         if(!valorRaw) return alert("Escribe un conteo");
 
-        const esDuplicado = data.some(item => item.f === f && item.desc === desc && item.u === u);
-        if (esDuplicado) {
-            alert(`¡Este dato ya está guardado! Ya existe un registro para el insumo "${desc}" en la ubicación "${u}" para la fecha ${f}.`);
-            return;
-        }
-
-        let total = valorRaw.split('+').reduce((acc, curr) => acc + (parseFloat(curr.trim()) || 0), 0);
-
         const btn = document.querySelector("#inventario .btn-success");
-        const originalText = btn.innerHTML;
         btn.disabled = true;
-        btn.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Guardando...`;
 
         try {
-            data.push({f, p, d, desc, u, total, original: valorRaw});
-            localStorage.setItem('db_Final_Insumos_V7', JSON.stringify(data));
-            
+            let totalVal = evalSafe(valorRaw);
+            NUBE_DATOS.INSUMO.push({ f, p, d, desc, u, original: valorRaw, total: totalVal });
+            renderGeneral();
+
             await enviarAGoogle([f, p, d, desc, u, valorRaw, "INSUMO"]);
             
             document.getElementById('genInCant').value = "";
             document.querySelectorAll(".insumo-card").forEach(card => card.classList.remove("selected"));
             document.getElementById("genInDesc").value = "";
             document.getElementById("selectedInsumoLabel").innerText = "Ningún insumo seleccionado";
-
-            renderGeneral();
-            mostrarToast("Enviado a Hoja de Insumos.");
+            mostrarToast("Enviado a Hoja de Insumos Global.");
         } catch (e) {
             alert("Error al guardar.");
         } finally {
             btn.disabled = false;
-            btn.innerHTML = originalText;
         }
     }
 
     function renderGeneral() {
         const s = document.getElementById('genSearch').value.toLowerCase();
-        let data = JSON.parse(localStorage.getItem('db_Final_Insumos_V7')) || [];
         const tbody = document.getElementById('bodyGeneral');
         tbody.innerHTML = ""; let t = 0;
-        data.forEach(item => {
+        
+        NUBE_DATOS.INSUMO.forEach(item => {
             if(item.desc.toLowerCase().includes(s)) {
                 t += item.total;
                 tbody.innerHTML += `<tr><td><span class="badge bg-secondary">${item.f}</span></td><td><b>${item.desc}</b></td><td>${item.d}</td><td>${item.u}</td><td>${item.original} (${item.total})</td><td>${item.p}</td></tr>`;
             }
         });
+        if(tbody.innerHTML === "") tbody.innerHTML = `<tr><td colspan="6" class="text-muted">No hay registros cargados.</td></tr>`;
         document.getElementById('sumGeneral').innerText = t;
     }
 
@@ -708,7 +693,6 @@
     }
 
     async function guardarCic() {
-        let data = JSON.parse(localStorage.getItem('db_Final_Ciclicos_V7')) || [];
         const f = document.getElementById('cicFecha').value;
         const d = document.getElementById('cicDept').value;
         const u = document.getElementById('cicInUbic').value;
@@ -720,23 +704,8 @@
         const sers = document.querySelectorAll('.c-ser');
         const coits = document.querySelectorAll('.c-coit');
 
-        for (let i = 0; i < prefs.length; i++) {
-            const sillaFull = `${prefs[i].value} ${nums[i].value.trim()}`;
-            const serialVal = sers[i].value.trim() || "-";
-
-            const esSillaDuplicada = data.some(item => item.f === f && item.sillaFull === sillaFull && nums[i].value.trim() !== "");
-            const esSerialDuplicated = data.some(item => item.f === f && item.serialVal === serialVal && serialVal !== "-");
-
-            if (esSillaDuplicada || esSerialDuplicated) {
-                alert(`¡Este dato ya está guardado! El código o serial ya fue registrado en la fecha ${f}.`);
-                return;
-            }
-        }
-
         const btn = document.getElementById('btnSaveCic');
-        const originalText = btn.innerHTML;
         btn.disabled = true;
-        btn.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Guardando...`;
 
         try {
             for (let i = 0; i < prefs.length; i++) {
@@ -745,11 +714,10 @@
                 const serialVal = sers[i].value.trim() || "-";
                 const coitVal = coits[i].value.trim() || "-";
 
-                data.push({ f, d, u, sillaFull, e: estadoVal, serialVal, coitVal, t });
+                NUBE_DATOS.CICLICO.push({ f, d, u, sillaFull, e: estadoVal, serialVal, coitVal, t });
                 await enviarAGoogle([f, d, u, sillaFull, estadoVal, serialVal, coitVal, t, "CICLICO"]);
             }
 
-            localStorage.setItem('db_Final_Ciclicos_V7', JSON.stringify(data));
             document.getElementById('gridCic').innerHTML = "";
             document.getElementById('gridCic').style.display = "none";
             btn.style.display = "none";
@@ -760,112 +728,82 @@
             alert("Error al procesar.");
         } finally {
             btn.disabled = false;
-            btn.innerHTML = originalText;
         }
     }
 
     function renderCiclico() {
         const s = document.getElementById('cicSearch').value.toLowerCase();
-        let data = JSON.parse(localStorage.getItem('db_Final_Ciclicos_V7')) || [];
         const tbody = document.getElementById('bodyCiclico');
         tbody.innerHTML = ""; let si = 0, mo = 0;
-        data.forEach(item => {
+        
+        NUBE_DATOS.CICLICO.forEach(item => {
             if(item.sillaFull.toLowerCase().includes(s) || item.u.toLowerCase().includes(s)) {
                 if(item.t === "Silla") si++; else mo++;
                 const badgeColor = item.e === 'Stock' ? 'bg-success' : 'bg-danger';
                 tbody.innerHTML += `<tr><td><b>${item.u}</b></td><td><b>${item.sillaFull}</b></td><td><span class="badge ${badgeColor}">${item.e}</span></td><td>${item.serialVal}</td><td>${item.coitVal}</td></tr>`;
             }
         });
+        if(tbody.innerHTML === "") tbody.innerHTML = `<tr><td colspan="5" class="text-muted">No hay registros cargados.</td></tr>`;
         document.getElementById('sumSillas').innerText = si;
         document.getElementById('sumMonitores').innerText = mo;
     }
 
     async function guardarNovedadActivo() {
-        let data = JSON.parse(localStorage.getItem('db_Final_Novedades_V7')) || [];
         const fecha = obtenerFechaEstandar();
         const desc = document.getElementById('novActivoTipo').value;
         const resp = document.getElementById('novActivoResp').value.trim();
         const nota = document.getElementById('novActivoNota').value.trim() || "-";
         const cant = parseInt(document.getElementById('novActivoCant').value) || 0;
 
-        if(!resp) {
-            alert("Por favor introduce el Responsable / Proveedor.");
-            return;
-        }
+        if(!resp) return alert("Por favor introduce el Responsable / Proveedor.");
         if(cant <= 0) return alert("Por favor introduce una cantidad válida.");
 
-        const esDuplicado = data.some(item => item.fecha === fecha && item.desc === desc && item.resp === resp && item.cant === cant);
-        if (esDuplicado) {
-            alert(`¡Este dato ya está guardado! Ya se registró este ingreso de "${desc}" hoy.`);
-            return;
-        }
-
         const btn = document.getElementById('btnSaveNovActivo');
-        const originalText = btn.innerHTML;
         btn.disabled = true;
-        btn.innerHTML = `<span class="spinner-border spinner-border-sm"></span>`;
 
         try {
-            data.push({ fecha, desc, cant, resp, nota, categoria: "ACTIVO" });
-            localStorage.setItem('db_Final_Novedades_V7', JSON.stringify(data));
+            NUBE_DATOS.NOVEDAD_ACTIVO.push({ fecha, desc, cant, resp, nota, categoria: "ACTIVO" });
+            renderNovedades();
 
             await enviarAGoogle([fecha, desc, cant, resp, nota, "", "", "", "NOVEDAD_ACTIVO"]);
 
             document.getElementById('novActivoResp').value = "";
             document.getElementById('novActivoNota').value = "";
             document.getElementById('novActivoCant').value = "";
-            
-            renderNovedades();
             mostrarToast("Activo registrado.");
         } catch (e) {
-            alert("Inconveniente al procesar el activo.");
+            alert("Inconveniente al procesar.");
         } finally {
             btn.disabled = false;
-            btn.innerHTML = originalText;
         }
     }
 
     async function guardarNovedadInsumo() {
-        let data = JSON.parse(localStorage.getItem('db_Final_Novedades_V7')) || [];
         const fecha = obtenerFechaEstandar();
         const desc = document.getElementById('novInsumoDesc').value;
         const cant = parseInt(document.getElementById('novInsumoCant').value) || 0;
 
         if(cant <= 0) return alert("Por favor introduce una cantidad válida.");
 
-        const esDuplicado = data.some(item => item.fecha === fecha && item.desc === desc && item.cant === cant);
-        if (esDuplicado) {
-            alert(`¡Este dato ya está guardado! Ya ingresaste este lote de "${desc}" hoy.`);
-            return;
-        }
-
         const btn = document.getElementById('btnSaveNovInsumo');
-        const originalText = btn.innerHTML;
         btn.disabled = true;
-        btn.innerHTML = `<span class="spinner-border spinner-border-sm"></span> Guardando...`;
 
         try {
-            data.push({ fecha, desc, cant, resp: "-", nota: "-", categoria: "INSUMO" });
-            localStorage.setItem('db_Final_Novedades_V7', JSON.stringify(data));
+            NUBE_DATOS.NOVEDAD_INSUMO.push({ fecha, desc, cant, resp: "-", nota: "-", categoria: "INSUMO" });
+            renderNovedades();
 
             await enviarAGoogle([fecha, desc, cant, "-", "-", "", "", "", "NOVEDAD_INSUMO"]);
-
             document.getElementById('novInsumoCant').value = "";
-            
-            renderNovedades();
             mostrarToast("Insumo registrado.");
         } catch (e) {
-            alert("Inconveniente al procesar el insumo.");
+            alert("Inconveniente al procesar.");
         } finally {
             btn.disabled = false;
-            btn.innerHTML = originalText;
         }
     }
 
     function renderNovedades() {
         const s = document.getElementById('novSearch').value.toLowerCase();
-        let data = JSON.parse(localStorage.getItem('db_Final_Novedades_V7')) || [];
-        
         const tbodyActivos = document.getElementById('bodyNovActivos');
         const tbodyInsumos = document.getElementById('bodyNovInsumos');
         
@@ -875,40 +813,28 @@
         let totalActivos = 0;
         let totalInsumos = 0;
         
-        data.forEach(item => {
-            const matchesSearch = item.desc.toLowerCase().includes(s) || (item.resp && item.resp.toLowerCase().includes(s));
-            
-            if(matchesSearch) {
-                const categoria = item.categoria || ((item.desc === "Silla" || item.desc === "Monitor") ? "ACTIVO" : "INSUMO");
-                
-                if(categoria === "ACTIVO") {
-                    totalActivos += item.cant;
-                    tbodyActivos.innerHTML += `
-                        <tr>
-                            <td><span class="badge bg-secondary">${item.fecha}</span></td>
-                            <td><b>${item.desc}</b></td>
-                            <td>${item.resp || '-'}</td>
-                            <td>${item.nota || '-'}</td>
-                            <td class="text-success fw-bold">+ ${item.cant}</td>
-                        </tr>`;
-                } else {
-                    totalInsumos += item.cant;
-                    tbodyInsumos.innerHTML += `
-                        <tr>
-                            <td><span class="badge bg-secondary">${item.fecha}</span></td>
-                            <td><b>${item.desc}</b></td>
-                            <td class="text-success fw-bold">+ ${item.cant}</td>
-                        </tr>`;
-                }
+        NUBE_DATOS.NOVEDAD_ACTIVO.forEach(item => {
+            if(item.desc.toLowerCase().includes(s) || item.resp.toLowerCase().includes(s)) {
+                totalActivos += item.cant;
+                tbodyActivos.innerHTML += `<tr><td><span class="badge bg-secondary">${item.fecha}</span></td><td><b>${item.desc}</b></td><td>${item.resp}</td><td>${item.nota}</td><td class="text-success fw-bold">+ ${item.cant}</td></tr>`;
             }
         });
         
+        NUBE_DATOS.NOVEDAD_INSUMO.forEach(item => {
+            if(item.desc.toLowerCase().includes(s)) {
+                totalInsumos += item.cant;
+                tbodyInsumos.innerHTML += `<tr><td><span class="badge bg-secondary">${item.fecha}</span></td><td><b>${item.desc}</b></td><td class="text-success fw-bold">+ ${item.cant}</td></tr>`;
+            }
+        });
+        
+        if(tbodyActivos.innerHTML === "") tbodyActivos.innerHTML = `<tr><td colspan="5" class="text-muted">Sin ingresos.</td></tr>`;
+        if(tbodyInsumos.innerHTML === "") tbodyInsumos.innerHTML = `<tr><td colspan="3" class="text-muted">Sin ingresos.</td></tr>`;
+
         document.getElementById('sumTotalActivos').innerText = totalActivos;
         document.getElementById('sumTotalInsumos').innerText = totalInsumos;
     }
 
-    function guardarQueja() {
-        let data = JSON.parse(localStorage.getItem('db_Final_Quejas_V7')) || [];
+    async function guardarQueja() {
         const fecha = obtenerFechaEstandar();
         const hora = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
         const nombre = document.getElementById('qNombre').value.trim();
@@ -917,22 +843,20 @@
 
         if(!nombre || !mensaje) return alert("Campos obligatorios vacíos.");
 
-        data.push({ fecha, hora, nombre, dept, mensaje });
-        localStorage.setItem('db_Final_Quejas_V7', JSON.stringify(data));
+        NUBE_DATOS.QUEJA.push({ fecha, hora, nombre, dept, mensaje });
+        renderQuejas();
 
-        enviarAGoogle([fecha, hora, nombre, dept, mensaje, "", "", "", "QUEJA"]);
+        await enviarAGoogle([fecha, hora, nombre, dept, mensaje, "", "", "", "QUEJA"]);
 
         document.getElementById('qNombre').value = "";
         document.getElementById('qMensaje').value = "";
-        renderQuejas();
     }
 
     function renderQuejas() {
-        let data = JSON.parse(localStorage.getItem('db_Final_Quejas_V7')) || [];
         const chatContainer = document.getElementById('chatQuejas');
-        chatContainer.innerHTML = data.length === 0 ? "<p class='text-muted text-center my-3'>No hay reportes.</p>" : "";
+        chatContainer.innerHTML = NUBE_DATOS.QUEJA.length === 0 ? "<p class='text-muted text-center my-3'>No hay reportes.</p>" : "";
 
-        data.forEach(q => {
+        NUBE_DATOS.QUEJA.forEach(q => {
             chatContainer.innerHTML += `
                 <div class="bg-white p-3 rounded-3 shadow-sm border-start border-4 border-success mb-2">
                     <div class="d-flex justify-content-between small text-muted mb-1">
