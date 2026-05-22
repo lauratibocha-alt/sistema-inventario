@@ -193,7 +193,7 @@
                 <div class="tab-pane fade show active" id="inventario" role="tabpanel">
                     <div class="header-premium d-flex justify-content-between align-items-center mb-3">
                         <span><i class="bi bi-box-seam me-2"></i> Registro de Inventarios Insumos</span>
-                       
+                        <button class="btn btn-sm btn-light fw-bold" onclick="cargarDatosDesdeGoogle()"><i class="bi bi-arrow-clockwise"></i> Sincronizar Nube</button>
                     </div>
                     
                     <div class="card p-3 mb-4 bg-light border border-light-subtle rounded-3">
@@ -259,7 +259,7 @@
                 <div class="tab-pane fade" id="ciclicos" role="tabpanel">
                     <div class="header-premium d-flex justify-content-between align-items-center mb-3">
                         <span><i class="bi bi-arrow-repeat me-2"></i> Registro de Inventarios Cíclicos</span>
-                       
+                        <button class="btn btn-sm btn-light fw-bold" onclick="cargarDatosDesdeGoogle()"><i class="bi bi-arrow-clockwise"></i> Sincronizar Nube</button>
                     </div>
                     
                     <div class="card p-3 mb-4 bg-light border border-light-subtle rounded-3">
@@ -334,7 +334,7 @@
                 <div class="tab-pane fade" id="stock_novedades" role="tabpanel">
                     <div class="header-premium d-flex justify-content-between align-items-center mb-3">
                         <span><i class="bi bi-clock-history me-2"></i> Entradas e Ingresos de Stock</span>
-                       
+                        <button class="btn btn-sm btn-light fw-bold" onclick="cargarDatosDesdeGoogle()"><i class="bi bi-arrow-clockwise"></i> Sincronizar Nube</button>
                     </div>
                     
                     <div class="card p-3 mb-4 bg-light border border-light-subtle rounded-3">
@@ -445,7 +445,7 @@
                 <div class="tab-pane fade" id="quejas_tab" role="tabpanel">
                     <div class="header-premium d-flex justify-content-between align-items-center mb-3">
                         <span><i class="bi bi-chat-left-dots-fill me-2"></i> Buzón de Sugerencias</span>
-                       
+                        <button class="btn btn-sm btn-light fw-bold" onclick="cargarDatosDesdeGoogle()"><i class="bi bi-arrow-clockwise"></i> Sincronizar Nube</button>
                     </div>
 
                     <div id="chatQuejas" class="mb-4 d-flex flex-column gap-2 p-3 bg-light border rounded-3 shadow-inner" style="max-height: 350px; overflow-y: auto;"></div>
@@ -466,7 +466,9 @@
                             <label class="form-label small fw-bold text-secondary">Descripción de la Queja o Malestar de Herramienta</label>
                             <textarea id="qMensaje" rows="3" class="form-control" placeholder="Describe detalladamente la situación o el producto dañado..."></textarea>
                         </div>
-                        <button class="btn btn-success text-white fw-bold w-100 py-2 shadow-sm" onclick="guardarQueja()"><i class="bi bi-send-fill me-2"></i> Enviar Reporte</button>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-success text-white fw-bold w-100 py-2 shadow-sm" onclick="guardarQueja()"><i class="bi bi-send-fill me-2"></i> Enviar Reporte</button>
+                        </div>
                     </div>
                 </div>
 
@@ -489,12 +491,10 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    // URL DE TU APLICACIÓN WEB DE GOOGLE APPS SCRIPT CONFIGURADA
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx3niwSNFM9G83qxq_RkKOf2HCZDXXLLq544Sw1bAUQntF0eKEWPiiGteL2I3mSw8PkRA/exec";
     
     const departamentos = ["LOG Connecta","LOG One Plaza","SD Torre CCI","SD Connecta","SD One Plaza"];
     
-    // Almacenamiento unificado sincronizado con Google
     let NUBE_DATOS = {
         INSUMO: [],
         CICLICO: [],
@@ -518,7 +518,7 @@
         { nombre: "Bolsa de valor carta ", emoji: "🛍️" }, { nombre: "Bolsas de valor oficio ", emoji: "🛍️" },
         { nombre: "Bolsas servientrega ", emoji: "🚚" }, { nombre: "Llaves exagonas ", emoji: "🔧" },
         { nombre: "Destornillador de pala", emoji: "🪛" }, { nombre: "Destornillador de estella ", emoji: "🪛" },
-        { nombre: "Destornillador de varias piezas ", emoji: "🪛" }, { fontName: "Martillo de goma ", emoji: "🔨" },
+        { nombre: "Destornillador de varias piezas ", emoji: "🪛" }, { nombre: "Martillo de goma ", emoji: "🔨" },
         { nombre: "Encintador ", emoji: "🎀" }, { nombre: "Tijeras", emoji: "✂️" },
         { nombre: "Bisturi ", emoji: "🔪" }, { nombre: "Post-it paquete ", emoji: "📝" },
         { nombre: "Esfero ", emoji: "🖊️" }, { nombre: "Marcadores ", emoji: "🖍️" },
@@ -531,6 +531,16 @@
 
     function obtenerFechaEstandar() {
         return new Date().toISOString().split('T')[0];
+    }
+
+    // NUEVO: Función auxiliar para cortar y formatear las fechas largas de Google de forma limpia
+    function formatearFechaLimpia(fechaStr) {
+        if (!fechaStr) return "-";
+        // Si contiene la T característica del formato ISO de Google, la cortamos
+        if (fechaStr.toString().includes("T")) {
+            return fechaStr.toString().split("T")[0];
+        }
+        return fechaStr.toString();
     }
 
     function mostrarToast(mensaje) {
@@ -584,11 +594,12 @@
             });
             const dataJson = await respuesta.json();
             if(dataJson.status === "success") {
-                NUBE_DATOS.INSUMO = (dataJson.data.INSUMO || []).map(r => ({ f: r[0], p: r[1], d: r[2], desc: r[3], u: r[4], original: r[5], total: evalSafe(r[5]) }));
-                NUBE_DATOS.CICLICO = (dataJson.data.CICLICO || []).map(r => ({ f: r[0], d: r[1], u: r[2], sillaFull: r[3], e: r[4], serialVal: r[5], coitVal: r[6], t: r[7] }));
-                NUBE_DATOS.NOVEDAD_ACTIVO = (dataJson.data.NOVEDAD_ACTIVO || []).map(r => ({ fecha: r[0], desc: r[1], cant: parseInt(r[2])||0, resp: r[3], nota: r[4], categoria: "ACTIVO" }));
-                NUBE_DATOS.NOVEDAD_INSUMO = (dataJson.data.NOVEDAD_INSUMO || []).map(r => ({ fecha: r[0], desc: r[1], cant: parseInt(r[2])||0, resp: r[3], nota: r[4], categoria: "INSUMO" }));
-                NUBE_DATOS.QUEJA = (dataJson.data.QUEJA || []).map(r => ({ fecha: r[0], hora: r[1], nombre: r[2], dept: r[3], mensaje: r[4] }));
+                // Aplicamos formatearFechaLimpia() en todos los mapeos de fecha al traer los datos
+                NUBE_DATOS.INSUMO = (dataJson.data.INSUMO || []).map(r => ({ f: formatearFechaLimpia(r[0]), p: r[1], d: r[2], desc: r[3], u: r[4], original: r[5], total: evalSafe(r[5]) }));
+                NUBE_DATOS.CICLICO = (dataJson.data.CICLICO || []).map(r => ({ f: formatearFechaLimpia(r[0]), d: r[1], u: r[2], sillaFull: r[3], e: r[4], serialVal: r[5], coitVal: r[6], t: r[7] }));
+                NUBE_DATOS.NOVEDAD_ACTIVO = (dataJson.data.NOVEDAD_ACTIVO || []).map(r => ({ fecha: formatearFechaLimpia(r[0]), desc: r[1], cant: parseInt(r[2])||0, resp: r[3], nota: r[4], categoria: "ACTIVO" }));
+                NUBE_DATOS.NOVEDAD_INSUMO = (dataJson.data.NOVEDAD_INSUMO || []).map(r => ({ fecha: formatearFechaLimpia(r[0]), desc: r[1], cant: parseInt(r[2])||0, resp: r[3], nota: r[4], categoria: "INSUMO" }));
+                NUBE_DATOS.QUEJA = (dataJson.data.QUEJA || []).map(r => ({ fecha: formatearFechaLimpia(r[0]), hora: r[1], nombre: r[2], dept: r[3], mensaje: r[4] }));
                 
                 renderizarTablasTodo();
             }
@@ -642,7 +653,7 @@
 
         try {
             let totalVal = evalSafe(valorRaw);
-            NUBE_DATOS.INSUMO.push({ f, p, d, desc, u, original: valorRaw, total: totalVal });
+            NUBE_DATOS.INSUMO.push({ f: formatearFechaLimpia(f), p, d, desc, u, original: valorRaw, total: totalVal });
             renderGeneral();
 
             await enviarAGoogle([f, p, d, desc, u, valorRaw, "INSUMO"]);
@@ -714,7 +725,7 @@
                 const serialVal = sers[i].value.trim() || "-";
                 const coitVal = coits[i].value.trim() || "-";
 
-                NUBE_DATOS.CICLICO.push({ f, d, u, sillaFull, e: estadoVal, serialVal, coitVal, t });
+                NUBE_DATOS.CICLICO.push({ f: formatearFechaLimpia(f), d, u, sillaFull, e: estadoVal, serialVal, coitVal, t });
                 await enviarAGoogle([f, d, u, sillaFull, estadoVal, serialVal, coitVal, t, "CICLICO"]);
             }
 
@@ -762,7 +773,7 @@
         btn.disabled = true;
 
         try {
-            NUBE_DATOS.NOVEDAD_ACTIVO.push({ fecha, desc, cant, resp, nota, categoria: "ACTIVO" });
+            NUBE_DATOS.NOVEDAD_ACTIVO.push({ fecha: formatearFechaLimpia(fecha), desc, cant, resp, nota, categoria: "ACTIVO" });
             renderNovedades();
 
             await enviarAGoogle([fecha, desc, cant, resp, nota, "", "", "", "NOVEDAD_ACTIVO"]);
@@ -789,7 +800,7 @@
         btn.disabled = true;
 
         try {
-            NUBE_DATOS.NOVEDAD_INSUMO.push({ fecha, desc, cant, resp: "-", nota: "-", categoria: "INSUMO" });
+            NUBE_DATOS.NOVEDAD_INSUMO.push({ fecha: formatearFechaLimpia(fecha), desc, cant, resp: "-", nota: "-", categoria: "INSUMO" });
             renderNovedades();
 
             await enviarAGoogle([fecha, desc, cant, "-", "-", "", "", "", "NOVEDAD_INSUMO"]);
@@ -843,7 +854,7 @@
 
         if(!nombre || !mensaje) return alert("Campos obligatorios vacíos.");
 
-        NUBE_DATOS.QUEJA.push({ fecha, hora, nombre, dept, mensaje });
+        NUBE_DATOS.QUEJA.push({ fecha: formatearFechaLimpia(fecha), hora, nombre, dept, mensaje });
         renderQuejas();
 
         await enviarAGoogle([fecha, hora, nombre, dept, mensaje, "", "", "", "QUEJA"]);
